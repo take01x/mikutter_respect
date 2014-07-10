@@ -8,9 +8,11 @@ Plugin.create(:mikutter_respect) do
           visible: true,
           role: :timeline
           ) do |opt|
-    opt.messages[0].retweet
-    opt.messages[0].favorite(true)
-    Service.primary.post(:message => opt.messages[0],
-                         :replyto => opt.messages[0][:replyto])
+    opt.messages.map{ |m|
+      Service.primary.post(:message => m.message,
+                           :replyto => m.message[:replyto])
+      m.message.retweet
+      m.message.favorite(true)
+    }
   end
 end
